@@ -18,6 +18,11 @@ const validate = values => {
   } else if (!isValidEmail(values.email)) {
     errors.email = 'Invalid Email'
   }
+
+  if (!values.state) {
+    errors.state = 'Required'
+  }
+
   return errors
 }
 
@@ -59,6 +64,7 @@ const SimpleForm = props => {
       <Field name="lastName" label="Last Name" component={RenderInput} />
       <Field name="email" label="Email" component={RenderInput} />
       <Field name="state" label="State" component={RenderSelect}>
+        <option />
         {states.map(state =>
           <option key={state} value={state}>
             {state}
