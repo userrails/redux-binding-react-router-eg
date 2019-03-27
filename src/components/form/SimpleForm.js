@@ -1,6 +1,7 @@
 import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 import isValidEmail from 'sane-email-validation';
+import {states} from '../../data/states';
 
 const validate = values => {
   const errors = {}
@@ -20,32 +21,50 @@ const validate = values => {
   return errors
 }
 
-const renderInput = ({input, meta, label}) =>
-  <div className={
-    [
+const createRenderer = render => ({input, meta, label, ...rest}) =>
+  <div
+    className={[
       meta.error && meta.touched ? 'error' : '',
       meta.active ? 'active' : ''
-    ].join(' ')
-  }>
-    <label>{label}</label>
-    <input {...input} />
-    {
-      meta.error &&
+    ].join(' ')}
+    >
+    <label>
+      {label}
+    </label>
+    {render(input, label, rest)}
+
+    {meta.error &&
       meta.touched &&
       <span>
         {meta.error}
-      </span>
-    }
+      </span>}
   </div>
+
+  const RenderInput = createRenderer((input, label) =>
+    <input {...input} placeholder={label} />
+  )
+
+  const RenderSelect = createRenderer((input, label, {children}) =>
+    <select {...input}>
+      {children}
+    </select>
+  )
 
 const SimpleForm = props => {
   const { handleSubmit, pristine, reset, submitting } = props;
+  console.log("********" + states)
   return (
     <form onSubmit={handleSubmit}>
-      <Field name="firstName" label="First Name" component={renderInput} placeholder="First Name" />
-      <Field name="lastName" label="Last Name" component={renderInput} placeholder="Last Name" />
-      <Field name="email" label="Email" component={renderInput} placeholder="Email" />
-
+      <Field name="firstName" label="First Name" component={RenderInput} />
+      <Field name="lastName" label="Last Name" component={RenderInput} />
+      <Field name="email" label="Email" component={RenderInput} />
+      <Field name="state" label="State" component={RenderSelect}>
+        {states.map(state =>
+          <option key={state} value={state}>
+            {state}
+          </option>
+        )}
+      </Field>
       <div>
         <label>Sex</label>
         <div>
