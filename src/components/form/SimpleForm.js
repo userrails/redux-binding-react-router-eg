@@ -1,43 +1,51 @@
 import React from 'react';
 import { Field, reduxForm } from 'redux-form';
+import isValidEmail from 'sane-email-validation';
+
+const validate = values => {
+  const errors = {}
+  if (!values.firstName) {
+    errors.firstName = 'Required'
+  }
+
+  if (!values.lastName) {
+    errors.lastName = 'Required'
+  }
+
+  if (!values.email) {
+    errors.email = 'Required'
+  } else if (!isValidEmail(values.email)) {
+    errors.email = 'Invalid Email'
+  }
+  return errors
+}
+
+const renderInput = ({input, meta, label}) =>
+  <div className={
+    [
+      meta.error && meta.touched ? 'error' : '',
+      meta.active ? 'active' : ''
+    ].join(' ')
+  }>
+    <label>{label}</label>
+    <input {...input} />
+    {
+      meta.error &&
+      meta.touched &&
+      <span>
+        {meta.error}
+      </span>
+    }
+  </div>
 
 const SimpleForm = props => {
   const { handleSubmit, pristine, reset, submitting } = props;
   return (
     <form onSubmit={handleSubmit}>
-      <div>
-        <label>First Name</label>
-        <div>
-          <Field
-            name="firstName"
-            component="input"
-            type="text"
-            placeholder="First Name"
-          />
-        </div>
-      </div>
-      <div>
-        <label>Last Name</label>
-        <div>
-          <Field
-            name="lastName"
-            component="input"
-            type="text"
-            placeholder="Last Name"
-          />
-        </div>
-      </div>
-      <div>
-        <label>Email</label>
-        <div>
-          <Field
-            name="email"
-            component="input"
-            type="email"
-            placeholder="Email"
-          />
-        </div>
-      </div>
+      <Field name="firstName" label="First Name" component={renderInput} placeholder="First Name" />
+      <Field name="lastName" label="Last Name" component={renderInput} placeholder="Last Name" />
+      <Field name="email" label="Email" component={renderInput} placeholder="Email" />
+
       <div>
         <label>Sex</label>
         <div>
@@ -93,4 +101,5 @@ const SimpleForm = props => {
 
 export default reduxForm({
   form: 'demo', // a unique identifier for this form
+  validate
 })(SimpleForm);

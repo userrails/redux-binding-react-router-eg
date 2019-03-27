@@ -6,7 +6,7 @@ import { ConnectedRouter } from 'connected-react-router'
 class App extends Component {
   render() {
     return (
-      <div className="App">
+      <div>
         <header className="App-header">
           <ConnectedRouter history={this.props.history}>
             <Routes />
